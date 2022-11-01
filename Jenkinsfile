@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Code cloning from SCM') {
          steps {
-            git url: 'https://github.com/Prasadsgithub/spring-petclinic.git',
+            git url: 'https://github.com/hariprasad291/spring-petclinic.git',
             branch: 'main'
            }
         }
