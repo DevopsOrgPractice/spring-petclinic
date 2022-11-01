@@ -13,15 +13,27 @@ pipeline {
             branch: 'main'
            }
         }
-        stage("build") {
+        stage("build with sonar scan") {
             steps {
-                sh "mvn package"
+                sh "mvn package sonar:sonar"
             }
         }
-    stage('reporting test reports') {
+        stage('Archiving and Test Results') {
             steps {
-                junit testResults: '**/surefire-reports/*.xml'
+                junit testResults: 'target/surefire-reports/*.xml'
             }
-       }
+        }
     }
 }
+    //     stage('publish the artifacts to J Frog artifactory')  {
+    //         steps {
+                
+    //         }
+    //    }
+    // }
+    // agent {label 'NODE2'}
+    //     options {
+    //     timeout(time: 1, unit: 'HOURS')
+    // stages {
+    //     sage
+    // }
