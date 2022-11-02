@@ -13,27 +13,32 @@ pipeline {
             branch: 'main'
            }
         }
-        stage("build with sonar scan") {
+        stage('Artifactory-Configuration') {
             steps {
-                sh "mvn package sonar:sonar"
+                rtMavenDeployer (
+                    id: 'spc-deployer',
+                    serverId: 'JFROG_PETCLINIC',
+                    releaseRepo: 'springpet-clinic-libs-release',
+                    snapshotRepo: 'springpet-clinic-libs-snapshot',
+                    
+                )
             }
         }
-        stage('Archiving and Test Results') {
+        stage(Build the Code and sonarqube-analysis) {
             steps {
-                junit testResults: 'target/surefire-reports/*.xml'
+                withSonarQubeEnv(SONAR_LATEST) {
+                //     sh script: &quot;mvn ${params.GOAL} sonar:sonar&quot;}
+
+                    rtMavenRun (
+                        // Tool name from Jenkins configuration.
+                        tool: MVN_BUILD,
+                        pom: pom.xml,
+                        goals: install,
+                        // Maven options.
+                        deployerId: spc-deployer,
+                    )
+                }
             }
         }
     }
 }
-    //     stage('publish the artifacts to J Frog artifactory')  {
-    //         steps {
-                
-    //         }
-    //    }
-    // }
-    // agent {label 'NODE2'}
-    //     options {
-    //     timeout(time: 1, unit: 'HOURS')
-    // stages {
-    //     sage
-    // }
