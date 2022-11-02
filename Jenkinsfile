@@ -8,10 +8,10 @@ pipeline {
     }
     stages {
         stage('Code cloning from SCM') {
-         steps {
-            git url: 'https://github.com/hariprasad291/spring-petclinic.git',
-            branch: 'main'
-           }
+            steps {
+                git url: 'https://github.com/hariprasad291/spring-petclinic.git',
+                branch: 'main'
+            }
         }
         stage('Build with sonarqube-analysis') {
             steps {
@@ -40,6 +40,25 @@ pipeline {
                     goals: 'install',
                     // Maven options.
                     deployerId: 'spc-deployer'
+                )
+            }
+        }
+        stage('download artifactories') {
+            agent {label 'APPSERVER'}
+                options {
+                timeout(time: 1, unit: 'HOURS')
+            }
+            steps {
+                rtDownload (
+                    serverId: 'JFROG_PETCLINIC',
+                    spec: '''{
+                        "files": [
+                            {
+                            "pattern": "springpet-clinic-libs-release/org/springframework/samples/spring-petclinic/2.7.3/*.jar",
+                            "target": "/home/appserver/remote_root/"
+                            }
+                        ]
+                    }''',
                 )
             }
         }
