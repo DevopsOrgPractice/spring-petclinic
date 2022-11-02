@@ -24,7 +24,7 @@ pipeline {
                 )
             }
         }
-        stage(Build the Code and sonarqube-analysis) {
+        stage('Build the Code and sonarqube-analysis') {
             steps {
                 withSonarQubeEnv(SONAR_LATEST) {
                 //     sh script: &quot;mvn ${params.GOAL} sonar:sonar&quot;}
@@ -33,7 +33,7 @@ pipeline {
                         // Tool name from Jenkins configuration.
                         tool: MVN_BUILD,
                         pom: pom.xml,
-                        goals: install,
+                        goals: install sonar:sonar,
                         // Maven options.
                         deployerId: spc-deployer,
                     )
