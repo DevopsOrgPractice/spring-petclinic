@@ -7,7 +7,8 @@ pipeline {
         pollSCM '* * * * *'
     }
     parameters {
-        choice(name: 'BRANCH_TO_BUILD', choices: ['hari-Jenkins', 'main'], defaultValue: 'hari-Jenkins' description: 'Branch to build')
+        choice(name: 'BRANCH_TO_BUILD', choices: ['hari-Jenkins', 'main'], description: 'Branch to build')
+    }
     stages {
         stage('Code cloning from SCM') {
             steps {
@@ -57,11 +58,13 @@ pipeline {
                         "files": [
                             {
                             "pattern": "springpet-clinic-libs-release/org/springframework/samples/spring-petclinic/2.7.3/*.jar",
-                            "target": "/home/appserver/remote_root/hari/"
+                            "target": "/home/appserver/remote_root/"
                             }
                         ]
                     }''',
                 )
+                sh "chmod +x /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar"
+                sh "java -jar /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar --server.port=8083"
             }
         }
     }
