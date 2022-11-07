@@ -6,11 +6,13 @@ pipeline {
     triggers {
         pollSCM '* * * * *'
     }
+    parameters {
+        choice(name: 'BRANCH_TO_BUILD', choices: ['hari-Jenkins', 'main'], defaultValue: 'hari-Jenkins' description: 'Branch to build')
     stages {
         stage('Code cloning from SCM') {
             steps {
                 git url: 'https://github.com/hariprasad291/spring-petclinic.git',
-                branch: 'main'
+                branch: "${params.BRANCH_TO_BUILD}"
             }
         }
         stage('Build with sonarqube-analysis') {
@@ -55,7 +57,7 @@ pipeline {
                         "files": [
                             {
                             "pattern": "springpet-clinic-libs-release/org/springframework/samples/spring-petclinic/2.7.3/*.jar",
-                            "target": "/home/appserver/remote_root/"
+                            "target": "/home/appserver/remote_root/hari/"
                             }
                         ]
                     }''',
