@@ -69,7 +69,7 @@ pipeline {
                     }''',
                 )
                 sh "chmod +x /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar"
-                sh "java -jar /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar"
+                sh "java -jar /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar &"
             }
         }
     }
