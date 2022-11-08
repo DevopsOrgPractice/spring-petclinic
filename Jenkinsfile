@@ -16,7 +16,7 @@ pipeline {
                 branch: "${params.BRANCH_TO_BUILD}"
             }
         }
-        stage('Build with sonarqube-analysis') {
+        stage('Run sonar scans') {
             steps {
                 withSonarQubeEnv('SONAR_LATEST') {
                     sh script: "mvn package sonar:sonar"
@@ -69,7 +69,7 @@ pipeline {
                     }''',
                 )
                 sh "chmod +x /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar"
-                sh "java -jar /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar --server.port=8083"
+                sh "java -jar /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar"
             }
         }
     }
