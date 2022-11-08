@@ -40,7 +40,7 @@ pipeline {
                     // Tool name from Jenkins configuration.
                     tool: 'MVN_BUILD',
                     pom: 'pom.xml',
-                    goals: 'install',
+                    goals: 'package',
                     // Maven options.
                     deployerId: 'spc-deployer'
                 )
@@ -51,7 +51,7 @@ pipeline {
                 junit testResults: '**/surefire-reports/*.xml'
             }
         }
-        stage('download artifactories') {
+        stage('download artifactories & Run application') {
             agent {label 'APPSERVER'}
                 options {
                 timeout(time: 1, unit: 'HOURS')
