@@ -40,7 +40,7 @@ pipeline {
                     // Tool name from Jenkins configuration.
                     tool: 'MVN_BUILD',
                     pom: 'pom.xml',
-                    goals: 'package',
+                    goals: 'install',
                     // Maven options.
                     deployerId: 'spc-deployer'
                 )
