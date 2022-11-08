@@ -46,6 +46,11 @@ pipeline {
                 )
             }
         }
+        stage('Archiving Test Reports') {
+            steps {
+                junit testResults: '**/surefire-reports/*.xml'
+            }
+        }
         stage('download artifactories') {
             agent {label 'APPSERVER'}
                 options {
