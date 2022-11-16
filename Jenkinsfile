@@ -51,26 +51,26 @@ pipeline {
                 junit testResults: '**/surefire-reports/*.xml'
             }
         }
-        // stage('download artifactories & Run application') {
-        //     agent {label 'APPSERVER'}
-        //         options {
-        //         timeout(time: 1, unit: 'HOURS')
-        //     }
-        //     steps {
-        //         rtDownload (
-        //             serverId: 'JFROG_NEW',
-        //             spec: '''{
-        //                 "files": [
-        //                     {
-        //                     "pattern": "springpet-clinic-libs-release/org/springframework/samples/spring-petclinic/2.7.3/*.jar",
-        //                     "target": "/home/appserver/remote_root/"
-        //                     }
-        //                 ]
-        //             }''',
-        //         )
-        //         sh "chmod +x /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar"
-        //         sh "java -jar /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar &"
-        //     }
-        // }
+        stage('download artifactories & Run application') {
+            agent {label 'APPSERVER'}
+                options {
+                timeout(time: 1, unit: 'HOURS')
+            }
+            steps {
+                rtDownload (
+                    serverId: 'JFROG_NEW',
+                    spec: '''{
+                        "files": [
+                            {
+                            "pattern": "springpet-clinic-libs-release/org/springframework/samples/spring-petclinic/2.7.3/*.jar",
+                            "target": "/home/appserver/remote_root/"
+                            }
+                        ]
+                    }''',
+                )
+                sh "chmod +x /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar"
+                sh "java -jar /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar &"
+            }
+        }
     }
 }
