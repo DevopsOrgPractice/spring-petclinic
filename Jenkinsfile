@@ -59,24 +59,6 @@ pipeline {
             }
         }
 
-        // stage() {
-        //     steps {
-        //         rtUpload (
-        //             serverId: 'Artifactory-1',
-        //             spec: '''{
-        //                 "files": [
-        //                     {
-        //                     "pattern": "bazinga/*froggy*.zip",
-        //                     "target": "bazinga-repo/froggy-files/"
-        //                     }
-        //                 ]
-        //             }''',
-        //             buildName: "${JOB_NAME }",
-        //             buildNumber: "${BUILD_NUMBER }",
-        //         )
-        //     }
-        // }
-
         stage('Archiving Test Reports') {
             steps {
                 junit testResults: '**/surefire-reports/*.xml'
@@ -93,14 +75,22 @@ pipeline {
                     spec: '''{
                         "files": [
                             {
-                            "pattern": "springpet-clinic-libs-release/org/springframework/samples/spring-petclinic/2.7.3/*.jar",
+                            "pattern": "spring-new-libs-release/org/springframework/samples/spring-petclinic/2.7.3/*.jar",
                             "target": "/home/appserver/remote_root/"
                             }
                         ]
                     }''',
                 )
                 sh "chmod +x /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar"
-                sh "java -jar /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar &"
+            }
+        }
+        stage('Deploy on appserver using ansible') {
+            agent {label 'APPSERVER'}
+                options {
+                timeout(time: 1, unit: 'HOURS')
+            }
+            steps {
+                sh script: "ansible-playbook ../Inventory ../playbook.yml"
             }
         }
     }
