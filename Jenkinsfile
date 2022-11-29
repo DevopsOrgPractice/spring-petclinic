@@ -1,5 +1,5 @@
 pipeline {
-    agent {label 'NODE1'}
+    agent {label 'APPSERVER'}
         options {
         timeout(time: 1, unit: 'HOURS')
     }
