@@ -90,7 +90,7 @@ pipeline {
                 timeout(time: 1, unit: 'HOURS')
             }
             steps {
-                sh script: "ansible-playbook ../Inventory ../playbook.yml"
+                sh script: "ansible-playbook -i ../Inventory ../playbook.yml"
             }
         }
     }
