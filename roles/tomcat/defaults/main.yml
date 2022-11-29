@@ -7,16 +7,16 @@ username: tomcat
 home_dir: /opt/tomcat
 default_shell: /bin/false
 tomcat_version: 9.0.69
-tomcat_latest: /opt/tomcat/
-tomcat_bin_directory: /opt/tomcat/bin/
+tomcat_latest: /opt/tomcat/latest
+tomcat_bin_directory: /opt/tomcat/latest/bin/
 tomcat_service_location: /etc/systemd/system/tomcat.service
-tomcat_admin_user: appserver
-tomcat_admin_password: appserver
+tomcat_admin_user: tomcat
+tomcat_admin_password: tomcat
 tomcat_users_relative: conf/tomcat-users.xml
 tomcat_manager_allow_ipregex: ".*"
 tomcat_allow_context_locations:
-- /opt/tomcat/webapps/manager/META-INF/context.xml
-- /opt/tomcat/webapps/host-manager/META-INF/context.xml
+- /opt/tomcat/latest/webapps/manager/META-INF/context.xml
+- /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
 
 # defaults for application
 deploy_version: 2.7.3

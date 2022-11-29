@@ -3,6 +3,10 @@ pipeline {
         options {
         timeout(time: 1, unit: 'HOURS')
     }
+    environment{
+        DOCKER_TAG = "${env.BUILD_ID}"
+        DOCKER_IMAGE = "springpetclinic"
+    }
     triggers {
         pollSCM '* * * * *'
     }
@@ -16,6 +20,10 @@ pipeline {
     }
     stages {
         stage('Code cloning from SCM') {
+            agent { label('KUBERNETES')  }
+                options {
+                timeout(time: 1, unit: 'HOURS')
+            }
             steps {
                 git url: "${params.SCM_URL}",
                 branch: "${params.BRANCH_TO_BUILD}"
@@ -65,7 +73,7 @@ pipeline {
             }
         }
         stage('download artifactories & Run application') {
-            agent {label 'APPSERVER'}
+            agent {label 'KUBERNETES'}
                 options {
                 timeout(time: 1, unit: 'HOURS')
             }
@@ -76,12 +84,24 @@ pipeline {
                         "files": [
                             {
                             "pattern": "spring-new-libs-release/org/springframework/samples/spring-petclinic/2.7.3/*.jar",
-                            "target": "/home/appserver/remote_root/"
+                            "target": "./"
                             }
                         ]
                     }''',
                 )
-                sh "chmod +x /home/appserver/remote_root/org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar"
+                sh '''
+                    chmod +x org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar
+                    cp org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar . 
+                '''
+                script{
+                    // withCredentials([string(credentialsId: 'JFROG_NEW', variable: 'Password')]) {
+                             sh '''
+                                docker build -t harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG} .
+                                docker login -u ${env.JFROG_USERNAME} -p ${env.JFROG_TOKEN} harispringpetclinicnew.jfrog.io  
+                                docker push  harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG}
+                                // docker rmi harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG} 
+                            '''
+                }
             }
         }
         stage('Deploy on appserver using ansible') {
@@ -90,7 +110,9 @@ pipeline {
                 timeout(time: 1, unit: 'HOURS')
             }
             steps {
-                sh script: "ansible-playbook -i ../Inventory ../playbook.yml"
+                dir("${env.WORKSPACE}/spring-latest") {
+                    sh script: "ansible-playbook -i Inventory playbook.yml"
+                }
             }
         }
     }
