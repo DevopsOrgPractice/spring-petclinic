@@ -14,9 +14,6 @@ pipeline {
         string(name: 'SNAPSHOT_REPO', defaultValue: "spring-new-libs-snapshot", description: 'Repo for snapshot releses')
         
     }
-    environment {
-        
-    }
     stages {
         stage('Code cloning from SCM') {
             steps {
@@ -24,13 +21,13 @@ pipeline {
                 branch: "${params.BRANCH_TO_BUILD}"
             }
         }
-        stage('Build the code with sonar scans') {
-            steps {
-                withSonarQubeEnv('SONAR_LATEST') {
-                    sh script: "${params.MAVEN_GOAL}"
-                }
-            }
-        }
+        // stage('Build the code with sonar scans') {
+        //     steps {
+        //         withSonarQubeEnv('SONAR_LATEST') {
+        //             sh script: "${params.MAVEN_GOAL}"
+        //         }
+        //     }
+        // }
         // stage("Quality Gate") {
         //     steps {
         //       timeout(time: 1, unit: 'HOURS') {
