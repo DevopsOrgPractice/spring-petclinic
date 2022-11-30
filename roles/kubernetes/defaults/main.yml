@@ -1,0 +1,14 @@
+---
+# defaults file for kubernetes
+app_name: gol
+app_version: 1.0
+max_surge: 50%
+max_unavailable: 50%
+
+image_name: "{{ lookup('env', 'DOCKER_IMAGE') }}"
+docker_tag: "{{ lookup('env', 'DOCKER_TAG') }}"
+docker_image: harispringpetclinicnew.jfrog.io/game-of-life-docker/${image_name}:${docker_tag}
+
+# Jfrog creds 
+jfrog_user: "{{ lookup('env', 'JFROG_USERNAME') }}"
+jfrog_passwd: "{{ lookup('env', 'JFROG_TOKEN') }}"

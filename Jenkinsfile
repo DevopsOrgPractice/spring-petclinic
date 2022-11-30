@@ -33,19 +33,19 @@ pipeline {
 
             }
         }
-        // stage('Run Sonar scans with quality gate') {
-        //     steps {
-        //         withSonarQubeEnv('SONAR_LATEST') {
-        //             sh script: "${params.MAVEN_GOAL}"
-        //         }
-        //         timeout(time: 1, unit: 'HOURS') {
-        //             def qg = waitForQualityGate()
-        //             if (qg.status != 'OK') {
-        //                 error "Pipeline aborted due to quality gate failure: ${qg.status}"
-        //             }
-        //         }
-        //     }    
-        // }
+        stage('Run Sonar scans with quality gate') {
+            steps {
+                withSonarQubeEnv('SONAR_LATEST') {
+                    sh script: "${params.MAVEN_GOAL}"
+                }
+                timeout(time: 1, unit: 'HOURS') {
+                    def qg = waitForQualityGate()
+                    if (qg.status != 'OK') {
+                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    }
+                }
+            }    
+        }
         stage('Artifactory-Configuration') {
             steps {
                 rtMavenDeployer (

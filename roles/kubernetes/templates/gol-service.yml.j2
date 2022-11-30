@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gol-svc
+spec:
+  selector:
+    app: "{{ app_name }}"
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080

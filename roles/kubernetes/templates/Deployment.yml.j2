@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game-of-life
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "{{ app_name }}"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: "{{ max_surge }}"
+      maxUnavailable: "{{ max_unavailable }}"
+  minReadySeconds: 60
+  template: 
+    metadata:
+      labels:
+        app: "{{ app_name }}"
+        ver: "{{ app_version }}"
+    spec:
+      containers:
+        - name: gme-of0life
+          image: "{{ docker_image }}"
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
+            periodSeconds: 15
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 10
+            successThreshold: 3
+            failureThreshold: 3

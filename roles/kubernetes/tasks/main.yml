@@ -1,0 +1,8 @@
+---
+# tasks file for kubernetes
+- name: Create deployment and service
+  kubernetes.core.k8s:
+    state: present
+    template:
+      - path: '/testing/Deployment.yml.j2'
+      - path: '/testing/gol-service.yml.j2'
