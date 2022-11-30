@@ -132,7 +132,7 @@ pipeline {
                         sh '''
                         docker login -u ${USER} -p ${PASSWD} harispringpetclinicnew.jfrog.io  
                         docker pull  harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG}
-                        ansible-playbook -i ../spring-latest/Inventory ../spring-latest/${parms.PLAYBOOK}                            
+                        ansible-playbook -i ../spring-latest/Inventory ../spring-latest/${params.PLAYBOOK}                            
                     '''
                 }
             }
