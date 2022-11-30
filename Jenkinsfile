@@ -16,17 +16,21 @@ pipeline {
         string(name: 'MAVEN_GOAL', defaultValue: "mvn package sonar:sonar", description: 'Maven goal for building')
         string(name: 'RELEASE_REPO', defaultValue: "spring-new-libs-release", description: 'Repo for releses')
         string(name: 'SNAPSHOT_REPO', defaultValue: "spring-new-libs-snapshot", description: 'Repo for snapshot releses')
+        choice(name: 'PLAYBOOK', choices: ['playbook.yml', 'playbook_kubernetes.yml'], description: 'Playbook to deploy application on specified environments')
         
     }
     stages {
         stage('Code cloning from SCM') {
-            agent { label('KUBERNETES')  }
+            agent { label('APPSERVER')  }
                 options {
                 timeout(time: 1, unit: 'HOURS')
             }
             steps {
-                git url: "${params.SCM_URL}",
-                branch: "${params.BRANCH_TO_BUILD}"
+                dir("../spring-latest") {
+                    git url: "${params.SCM_URL}",
+                    branch: "${params.BRANCH_TO_BUILD}"                
+                }
+
             }
         }
         // stage('Run Sonar scans with quality gate') {
@@ -114,19 +118,24 @@ pipeline {
             steps {
                script{
                         sh 'sudo kubectl get pods -A' 
-                        sh script: "ansible-playbook -i Inventory playbook_kubernetes.yml"
                }
             }
         }
 
-        stage('Deploy on appserver using ansible') {
+        stage('Deploy on application using ansible') {
             agent {label 'APPSERVER'}
                 options {
                 timeout(time: 1, unit: 'HOURS')
             }
             steps {
                 dir("../spring-latest") {
-                    sh script: "ansible-playbook -i Inventory playbook.yml"
+                    withCredentials([usernamePassword(credentialsId: 'JFROG_NEW', passwordVariable: 'PASSWD', usernameVariable: 'USER')]) {
+                            sh '''
+                            docker login -u ${USER} -p ${PASSWD} harispringpetclinicnew.jfrog.io  
+                            docker pull  harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG}
+                            ansible-playbook -i ../spring-latest/Inventory ../spring-latest/${parms.PLAYBOOK}                            
+                        '''
+                    }
                 }
             }
         }
