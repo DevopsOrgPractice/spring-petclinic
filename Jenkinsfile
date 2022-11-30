@@ -129,11 +129,9 @@ pipeline {
             }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'JFROG_NEW', passwordVariable: 'PASSWD', usernameVariable: 'USER')]) {
-                    sh '''
-                        docker login -u ${USER} -p ${PASSWD} harispringpetclinicnew.jfrog.io  
-                        docker pull  harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG}
-                        ansible-playbook -i ../spring-latest/Inventory ../spring-latest/"${params.PLAYBOOK}"
-                    '''                           
+                    sh "docker login -u ${USER} -p ${PASSWD} harispringpetclinicnew.jfrog.io"  
+                    sh "docker pull  harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh "ansible-playbook -i ../spring-latest/Inventory ../spring-latest/"${params.PLAYBOOK}""                          
                 }
             }
         }
