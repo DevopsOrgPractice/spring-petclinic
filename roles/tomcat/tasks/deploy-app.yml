@@ -5,5 +5,7 @@
     dest: "{{ tomcat_latest }}/webapps/{{ deploy_file_name }}"
     owner: "{{ username }}"
     group: "{{ username }}"
+    url_username: "{{ jfrog_user }}"
+    url_password: "{{ jfrog_passwd }}"
   notify:
     - reload the daemon, enable and start the tomcat service

@@ -18,6 +18,10 @@ tomcat_allow_context_locations:
 - /opt/tomcat/latest/webapps/manager/META-INF/context.xml
 - /opt/tomcat/latest/webapps/host-manager/META-INF/context.xml
 
+# Jfrog creds 
+jfrog_user: "{{ lookup('env', 'JFROG_USERNAME') }}"
+jfrog_passwd: "{{ lookup('env', 'JFROG_TOKEN') }}"
+
 # defaults for application
 deploy_version: 2.7.3
 deploy_repo: spring-new-libs-release/org/springframework/samples/spring-petclinic

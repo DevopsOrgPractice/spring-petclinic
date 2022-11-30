@@ -29,19 +29,18 @@ pipeline {
                 branch: "${params.BRANCH_TO_BUILD}"
             }
         }
-        // stage('Build the code with sonar scans') {
+        // stage('Run Sonar scans with quality gate') {
         //     steps {
         //         withSonarQubeEnv('SONAR_LATEST') {
         //             sh script: "${params.MAVEN_GOAL}"
         //         }
-        //     }
-        // }
-        // stage("Quality Gate") {
-        //     steps {
-        //       timeout(time: 1, unit: 'HOURS') {
-        //         waitForQualityGate abortPipeline: true
-        //       }
-        //     }
+        //         timeout(time: 1, unit: 'HOURS') {
+        //             def qg = waitForQualityGate()
+        //             if (qg.status != 'OK') {
+        //                 error "Pipeline aborted due to quality gate failure: ${qg.status}"
+        //             }
+        //         }
+        //     }    
         // }
         stage('Artifactory-Configuration') {
             steps {
@@ -54,7 +53,8 @@ pipeline {
                 )
             }
         }
-        stage('Build the Code and Deploy') {
+        
+        stage('Build & Deploy the Code') {
             steps {
                 rtMavenRun (
                     // Tool name from Jenkins configuration.
@@ -94,13 +94,16 @@ pipeline {
                     cp org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar . 
                 '''
                 script{
-                    // withCredentials([string(credentialsId: 'JFROG_NEW', variable: 'Password')]) {
+                        withCredentials([usernamePassword(credentialsId: 'JFROG_NEW', passwordVariable: 'PASSWD', usernameVariable: 'USER')]) {
                              sh '''
                                 docker build -t harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG} .
-                                docker login -u ${env.JFROG_USERNAME} -p ${env.JFROG_TOKEN} harispringpetclinicnew.jfrog.io  
+                                docker login -u ${USER} -p ${PASSWD} harispringpetclinicnew.jfrog.io  
                                 docker push  harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG}
                                 // docker rmi harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG} 
                             '''
+                        }
+
+                    }
                 }
             }
         }
