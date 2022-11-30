@@ -1,2 +1,5 @@
 [appserver]
 localhost
+
+[kubernetes]
+172.31.83.94

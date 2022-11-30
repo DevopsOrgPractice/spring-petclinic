@@ -1,0 +1,6 @@
+---
+- name: install tomcat and deploy the application
+  hosts: kubernetes
+  roles:
+    - role: roles/kubernetes
+      become: yes

@@ -94,26 +94,38 @@ pipeline {
                     cp org/springframework/samples/spring-petclinic/2.7.3/spring-petclinic-2.7.3.jar . 
                 '''
                 script{
-                        withCredentials([usernamePassword(credentialsId: 'JFROG_NEW', passwordVariable: 'PASSWD', usernameVariable: 'USER')]) {
-                             sh '''
-                                docker build -t harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG} .
-                                docker login -u ${USER} -p ${PASSWD} harispringpetclinicnew.jfrog.io  
-                                docker push  harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG}
-                                // docker rmi harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG} 
-                            '''
-                        }
-
+                    withCredentials([usernamePassword(credentialsId: 'JFROG_NEW', passwordVariable: 'PASSWD', usernameVariable: 'USER')]) {
+                            sh '''
+                            docker build -t harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG} .
+                            docker login -u ${USER} -p ${PASSWD} harispringpetclinicnew.jfrog.io  
+                            docker push  harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG}
+                            docker rmi harispringpetclinicnew.jfrog.io/spring-new-docker/${DOCKER_IMAGE}:${DOCKER_TAG} 
+                        '''
                     }
                 }
             }
         }
+
+        stage('Deploying application on k8s cluster') {
+            agent {label 'KUBERNETES'}
+                options {
+                timeout(time: 1, unit: 'HOURS')
+            }
+            steps {
+               script{
+                        sh 'sudo kubectl get pods -A' 
+                        sh script: "ansible-playbook -i Inventory playbook_kubernetes.yml"
+               }
+            }
+        }
+
         stage('Deploy on appserver using ansible') {
             agent {label 'APPSERVER'}
                 options {
                 timeout(time: 1, unit: 'HOURS')
             }
             steps {
-                dir("${env.WORKSPACE}/spring-latest") {
+                dir("../spring-latest") {
                     sh script: "ansible-playbook -i Inventory playbook.yml"
                 }
             }
