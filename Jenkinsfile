@@ -128,7 +128,6 @@ pipeline {
                 timeout(time: 1, unit: 'HOURS')
             }
             steps {
-                dir("../spring-latest") {
                     withCredentials([usernamePassword(credentialsId: 'JFROG_NEW', passwordVariable: 'PASSWD', usernameVariable: 'USER')]) {
                             sh '''
                             docker login -u ${USER} -p ${PASSWD} harispringpetclinicnew.jfrog.io  
